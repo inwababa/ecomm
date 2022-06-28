@@ -19,12 +19,12 @@ exports.Createorder = async (req, res) => {
         const { name, itemId, quantity, price } = req.body
 
         const newOrder= new Order({
-            orderid: result,
+            orderId: result,
             itemName: name,
             itemId: itemId,
             quantity: quantity,
             price: price,
-            owner: owner
+            //owner: owner
         });
 
         const order = await newOrder.save()
@@ -47,7 +47,7 @@ exports.Createorder = async (req, res) => {
 exports.OneOrder = async(req, res) => {
     const {orderId} = req.body
     try {
-        const order = await Order.find({orderId})
+        const order = await Order.findOne({orderId})
         res.status(200).send(order)
     } catch (error) {
         res.status(400).send(error)
@@ -60,5 +60,37 @@ exports.AllOder = async(req, res) => {
         res.status(200).send(orders)
     } catch (error) {
         res.status(400).send(error)
+    }
+}
+
+
+exports.Checkout = async (req, res) => {
+       const { orderId } = req.body
+
+    
+    try {
+
+        
+        const order = await Order.findOne({orderId: orderId})
+        
+        const see = order.orderId
+        
+
+        if(orderId == see){
+            return res.status(200).json({
+                success: true,
+                message: "You have successfully made a payment",
+              });
+        }
+
+
+        
+        
+    } catch (error) {
+        console.error("order-error", error);
+        return res.status(500).json({
+          error: true,
+          message: "Payment Unsuccessful",
+        });  
     }
 }

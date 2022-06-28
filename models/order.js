@@ -3,11 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectID = mongoose.Schema.Types.ObjectId
 
 const orderSchema = new Schema({
-    owner : {
-       type: ObjectID,
-       required: true,
-       ref: 'User'
-    },
+    
     orderId: {
        type: String,
        required: true,

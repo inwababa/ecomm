@@ -96,7 +96,9 @@ exports.Login = async (req, res) => {
       });
     }
     //3. Verify the password is valid
-    const isValid = await User.compareSync(password, user.password);
+    
+    const isValid = await bcrypt.compare(password, user.password)
+    
     if (!isValid) {
       return res.status(400).json({
         error: true,
@@ -133,7 +135,7 @@ exports.Activate = async (req, res) => {
         });
       }
       const user = await User.findOne({
-        email: id,
+        email: email,
         token: code
       });
       if (!user) {
@@ -192,13 +194,16 @@ exports.Activate = async (req, res) => {
         });
       }
       let code = Math.floor(100000 + Math.random() * 900000);
-      let response = await sendEmail(user.email, code);
-      if (response.error) {
-        return res.status(500).json({
-          error: true,
-          message: "Couldn't send mail. Please try again later.",
-        });
-      }
+      
+      // Send an email:
+const client = new postmark.Client("f546ddb6-ea12-4187-beb0-f68dfcc6b608");
+
+client.sendEmail({
+    "From": "hello@funaabpay.com.ng", 
+    "To": email, 
+    "Subject": "Verify Email", 
+    "TextBody": `Use the code:${code} to validate Account`
+});
       
       user.resetPasswordToken = code;
       
